@@ -1,88 +1,40 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-export interface ShopifyProduct {
-  node: {
-    id: string;
-    title: string;
-    description: string;
-    handle: string;
-    priceRange: {
-      minVariantPrice: {
-        amount: string;
-        currencyCode: string;
-      };
-    };
-    images: {
-      edges: Array<{
-        node: {
-          url: string;
-          altText: string | null;
-        };
-      }>;
-    };
-    variants: {
-      edges: Array<{
-        node: {
-          id: string;
-          title: string;
-          price: {
-            amount: string;
-            currencyCode: string;
-          };
-          availableForSale: boolean;
-          selectedOptions: Array<{
-            name: string;
-            value: string;
-          }>;
-        };
-      }>;
-    };
-    options: Array<{
-      name: string;
-      values: string[];
-    }>;
-  };
+export interface Product {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  category: 'summer' | 'winter' | 'custom';
+  image_url: string;
+  additional_images?: string[];
+  stock_quantity: number;
+  is_active: boolean;
 }
 
 export interface CartItem {
-  product: ShopifyProduct;
+  product: Product;
   variantId: string;
-  variantTitle: string;
-  price: {
-    amount: string;
-    currencyCode: string;
-  };
+  variantInfo?: string;
   quantity: number;
-  selectedOptions: Array<{
-    name: string;
-    value: string;
-  }>;
 }
 
 interface CartStore {
   items: CartItem[];
-  cartId: string | null;
-  checkoutUrl: string | null;
-  isLoading: boolean;
   
   addItem: (item: CartItem) => void;
   updateQuantity: (variantId: string, quantity: number) => void;
   removeItem: (variantId: string) => void;
   clearCart: () => void;
-  setCartId: (cartId: string) => void;
-  setCheckoutUrl: (url: string) => void;
-  setLoading: (loading: boolean) => void;
-  createCheckout: () => Promise<void>;
+  getTotalPrice: () => number;
+  getTotalItems: () => number;
 }
 
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
-      cartId: null,
-      checkoutUrl: null,
-      isLoading: false,
 
       addItem: (item) => {
         const { items } = get();
@@ -121,31 +73,19 @@ export const useCartStore = create<CartStore>()(
       },
 
       clearCart: () => {
-        set({ items: [], cartId: null, checkoutUrl: null });
+        set({ items: [] });
       },
 
-      setCartId: (cartId) => set({ cartId }),
-      setCheckoutUrl: (checkoutUrl) => set({ checkoutUrl }),
-      setLoading: (isLoading) => set({ isLoading }),
+      getTotalPrice: () => {
+        return get().items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+      },
 
-      createCheckout: async () => {
-        const { items, setLoading, setCheckoutUrl } = get();
-        if (items.length === 0) return;
-
-        setLoading(true);
-        try {
-          const { createStorefrontCheckout } = await import('@/lib/shopify');
-          const checkoutUrl = await createStorefrontCheckout(items);
-          setCheckoutUrl(checkoutUrl);
-        } catch (error) {
-          console.error('Failed to create checkout:', error);
-        } finally {
-          setLoading(false);
-        }
+      getTotalItems: () => {
+        return get().items.reduce((sum, item) => sum + item.quantity, 0);
       }
     }),
     {
-      name: 'shopify-cart',
+      name: 'cart-storage',
       storage: createJSONStorage(() => localStorage),
     }
   )
