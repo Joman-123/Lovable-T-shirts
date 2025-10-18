@@ -7,7 +7,8 @@ import { AdminProducts } from '@/components/admin/AdminProducts';
 import { AdminOrders } from '@/components/admin/AdminOrders';
 import { AdminCustomDesigns } from '@/components/admin/AdminCustomDesigns';
 import { AdminAnalytics } from '@/components/admin/AdminAnalytics';
-import { Loader2 } from 'lucide-react';
+import { AdminSettings } from '@/components/admin/AdminSettings';
+import { Loader2, Settings } from 'lucide-react';
 
 export default function Admin() {
   const { isAdmin, isLoading } = useAuth();
@@ -39,14 +40,29 @@ export default function Admin() {
           لوحة التحكم الإدارية
         </h1>
         
-        <Tabs defaultValue="products" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto">
-            <TabsTrigger value="products">المنتجات</TabsTrigger>
-            <TabsTrigger value="orders">الطلبات</TabsTrigger>
-            <TabsTrigger value="custom-designs">التصاميم المخصصة</TabsTrigger>
-            <TabsTrigger value="analytics">التحليلات</TabsTrigger>
+        <Tabs defaultValue="analytics" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5 lg:w-auto bg-card/50 p-1">
+            <TabsTrigger value="analytics" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-secondary">
+              التحليلات
+            </TabsTrigger>
+            <TabsTrigger value="products" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-secondary">
+              المنتجات
+            </TabsTrigger>
+            <TabsTrigger value="orders" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-secondary">
+              الطلبات
+            </TabsTrigger>
+            <TabsTrigger value="custom-designs" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-secondary">
+              التصاميم المخصصة
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-secondary">
+              <Settings className="h-4 w-4" />
+            </TabsTrigger>
           </TabsList>
           
+          <TabsContent value="analytics">
+            <AdminAnalytics />
+          </TabsContent>
+
           <TabsContent value="products">
             <AdminProducts />
           </TabsContent>
@@ -59,8 +75,8 @@ export default function Admin() {
             <AdminCustomDesigns />
           </TabsContent>
           
-          <TabsContent value="analytics">
-            <AdminAnalytics />
+          <TabsContent value="settings">
+            <AdminSettings />
           </TabsContent>
         </Tabs>
       </div>
