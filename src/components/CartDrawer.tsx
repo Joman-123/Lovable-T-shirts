@@ -10,7 +10,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 
 export const CartDrawer = () => {
@@ -18,27 +18,14 @@ export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { 
     items, 
-    isLoading, 
     updateQuantity, 
-    removeItem, 
-    createCheckout 
+    removeItem,
+    getTotalPrice,
+    getTotalItems
   } = useCartStore();
   
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
-
-  const handleCheckout = async () => {
-    try {
-      await createCheckout();
-      const checkoutUrl = useCartStore.getState().checkoutUrl;
-      if (checkoutUrl) {
-        window.open(checkoutUrl, '_blank');
-        setIsOpen(false);
-      }
-    } catch (error) {
-      console.error('Checkout failed:', error);
-    }
-  };
+  const totalItems = getTotalItems();
+  const totalPrice = getTotalPrice();
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -76,22 +63,24 @@ export const CartDrawer = () => {
                   {items.map((item) => (
                     <div key={item.variantId} className="flex gap-4 p-3 rounded-lg bg-gradient-to-br from-muted/50 to-muted/30 border border-primary/10 hover:border-primary/30 transition-all">
                       <div className="w-16 h-16 bg-background rounded-md overflow-hidden flex-shrink-0 border border-primary/20">
-                        {item.product.node.images?.edges?.[0]?.node && (
+                        {item.product.image_url && (
                           <img
-                            src={item.product.node.images.edges[0].node.url}
-                            alt={item.product.node.title}
+                            src={item.product.image_url}
+                            alt={item.product.title}
                             className="w-full h-full object-cover"
                           />
                         )}
                       </div>
                       
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium truncate text-foreground">{item.product.node.title}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {item.selectedOptions.map(option => option.value).join(' • ')}
-                        </p>
+                        <h4 className="font-medium truncate text-foreground">{item.product.title}</h4>
+                        {item.variantInfo && (
+                          <p className="text-sm text-muted-foreground">
+                            {item.variantInfo}
+                          </p>
+                        )}
                         <p className="font-semibold text-primary">
-                          {item.price.currencyCode} {parseFloat(item.price.amount).toFixed(2)}
+                          ${item.product.price.toFixed(2)}
                         </p>
                       </div>
                       
@@ -134,27 +123,17 @@ export const CartDrawer = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold">{t('cart.total')}</span>
                   <span className="text-xl font-bold text-primary">
-                    {items[0]?.price.currencyCode || 'USD'} {totalPrice.toFixed(2)}
+                    ${totalPrice.toFixed(2)}
                   </span>
                 </div>
                 
                 <Button 
-                  onClick={handleCheckout}
                   className="w-full bg-gradient-to-r from-primary to-secondary hover:shadow-[0_0_30px_rgba(255,193,7,0.5)] transition-all" 
                   size="lg"
-                  disabled={items.length === 0 || isLoading}
+                  disabled={items.length === 0}
                 >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Creating Checkout...
-                    </>
-                  ) : (
-                    <>
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      {t('cart.checkout')}
-                    </>
-                  )}
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  {t('cart.checkout')}
                 </Button>
               </div>
             </>

@@ -3,24 +3,31 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
-import { storefrontApiRequest, STOREFRONT_QUERY } from "@/lib/shopify";
-import { useCartStore, type ShopifyProduct } from "@/stores/cartStore";
+import { useCartStore, type Product } from "@/stores/cartStore";
 import { ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Products = () => {
   const { t } = useTranslation();
-  const [products, setProducts] = useState<ShopifyProduct[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const addItem = useCartStore(state => state.addItem);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await storefrontApiRequest(STOREFRONT_QUERY, { first: 20 });
-        setProducts(data.data.products.edges);
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        setProducts(data || []);
       } catch (error) {
         console.error('Error fetching products:', error);
+        toast.error('Failed to load products');
       } finally {
         setIsLoading(false);
       }
@@ -28,18 +35,14 @@ const Products = () => {
     fetchProducts();
   }, []);
 
-  const handleAddToCart = (product: ShopifyProduct) => {
-    const variant = product.node.variants.edges[0].node;
+  const handleAddToCart = (product: Product) => {
     addItem({
       product,
-      variantId: variant.id,
-      variantTitle: variant.title,
-      price: variant.price,
+      variantId: product.id,
       quantity: 1,
-      selectedOptions: variant.selectedOptions,
     });
     toast.success(t('products.addToCart'), {
-      description: product.node.title,
+      description: product.title,
     });
   };
 
@@ -71,30 +74,29 @@ const Products = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {products.map((product, index) => (
               <div
-                key={product.node.id}
+                key={product.id}
                 className="group bg-card rounded-lg overflow-hidden border border-primary/10 hover:border-primary/30 transition-all hover:shadow-[0_0_30px_rgba(255,193,7,0.2)] animate-fade-in-scale"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
-                <Link to={`/product/${product.node.handle}`}>
+                <Link to={`/product/${product.id}`}>
                   <div className="aspect-square overflow-hidden bg-muted/50">
-                    {product.node.images.edges[0] && (
+                    {product.image_url && (
                       <img
-                        src={product.node.images.edges[0].node.url}
-                        alt={product.node.title}
+                        src={product.image_url}
+                        alt={product.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                     )}
                   </div>
                 </Link>
                 <div className="p-4">
-                  <Link to={`/product/${product.node.handle}`}>
+                  <Link to={`/product/${product.id}`}>
                     <h3 className="text-lg font-bold mb-2 text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                      {product.node.title}
+                      {product.title}
                     </h3>
                   </Link>
                   <p className="text-xl font-bold text-primary mb-3">
-                    {product.node.priceRange.minVariantPrice.currencyCode}{' '}
-                    {parseFloat(product.node.priceRange.minVariantPrice.amount).toFixed(2)}
+                    ${product.price.toFixed(2)}
                   </p>
                   <Button 
                     onClick={() => handleAddToCart(product)}

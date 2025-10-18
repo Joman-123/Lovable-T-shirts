@@ -4,22 +4,31 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/Navbar";
 import { ArrowRight, Sparkles, TruckIcon } from "lucide-react";
-import { storefrontApiRequest, STOREFRONT_QUERY } from "@/lib/shopify";
-import type { ShopifyProduct } from "@/stores/cartStore";
+import type { Product } from "@/stores/cartStore";
 import heroImage from "@/assets/hero-banner.jpg";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Index = () => {
   const { t } = useTranslation();
-  const [products, setProducts] = useState<ShopifyProduct[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await storefrontApiRequest(STOREFRONT_QUERY, { first: 6 });
-        setProducts(data.data.products.edges);
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+          .limit(6);
+        
+        if (error) throw error;
+        setProducts(data || []);
       } catch (error) {
         console.error('Error fetching products:', error);
+        toast.error('Failed to load products');
       } finally {
         setIsLoading(false);
       }
@@ -113,28 +122,27 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.slice(0, 3).map((product, index) => (
                 <Link
-                  key={product.node.id}
-                  to={`/product/${product.node.handle}`}
+                  key={product.id}
+                  to={`/product/${product.id}`}
                   className="group animate-fade-in-scale"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div className="bg-card rounded-lg overflow-hidden border border-primary/10 hover:border-primary/30 transition-all hover:shadow-[0_0_30px_rgba(255,193,7,0.2)] h-full">
                     <div className="aspect-square overflow-hidden bg-muted/50">
-                      {product.node.images.edges[0] && (
+                      {product.image_url && (
                         <img
-                          src={product.node.images.edges[0].node.url}
-                          alt={product.node.title}
+                          src={product.image_url}
+                          alt={product.title}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         />
                       )}
                     </div>
                     <div className="p-6">
                       <h3 className="text-xl font-bold mb-2 text-foreground group-hover:text-primary transition-colors">
-                        {product.node.title}
+                        {product.title}
                       </h3>
                       <p className="text-2xl font-bold text-primary">
-                        {product.node.priceRange.minVariantPrice.currencyCode}{' '}
-                        {parseFloat(product.node.priceRange.minVariantPrice.amount).toFixed(2)}
+                        ${product.price.toFixed(2)}
                       </p>
                     </div>
                   </div>
