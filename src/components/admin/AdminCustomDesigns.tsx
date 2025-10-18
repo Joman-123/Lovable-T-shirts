@@ -36,8 +36,9 @@ export function AdminCustomDesigns() {
       queryClient.invalidateQueries({ queryKey: ['admin-custom-designs'] });
       toast.success('تم تحديث حالة الطلب بنجاح');
     },
-    onError: (error: any) => {
-      toast.error('خطأ في تحديث حالة الطلب', { description: error.message });
+    onError: (error: unknown) => {
+      const description = error instanceof Error ? error.message : 'حدث خطأ غير متوقع';
+      toast.error('خطأ في تحديث حالة الطلب', { description });
     }
   });
 
