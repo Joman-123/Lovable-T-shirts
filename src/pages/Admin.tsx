@@ -7,6 +7,7 @@ import { AdminProducts } from '@/components/admin/AdminProducts';
 import { AdminOrders } from '@/components/admin/AdminOrders';
 import { AdminCustomDesigns } from '@/components/admin/AdminCustomDesigns';
 import { AdminAnalytics } from '@/components/admin/AdminAnalytics';
+import { AdminSettings } from '@/components/admin/AdminSettings';
 import { Loader2 } from 'lucide-react';
 
 export default function Admin() {
@@ -39,13 +40,18 @@ export default function Admin() {
           لوحة التحكم الإدارية
         </h1>
         
-        <Tabs defaultValue="products" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto">
+        <Tabs defaultValue="analytics" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5 lg:w-auto">
+            <TabsTrigger value="analytics">التحليلات</TabsTrigger>
             <TabsTrigger value="products">المنتجات</TabsTrigger>
             <TabsTrigger value="orders">الطلبات</TabsTrigger>
             <TabsTrigger value="custom-designs">التصاميم المخصصة</TabsTrigger>
-            <TabsTrigger value="analytics">التحليلات</TabsTrigger>
+            <TabsTrigger value="settings">الإعدادات</TabsTrigger>
           </TabsList>
+          
+          <TabsContent value="analytics">
+            <AdminAnalytics />
+          </TabsContent>
           
           <TabsContent value="products">
             <AdminProducts />
@@ -59,8 +65,8 @@ export default function Admin() {
             <AdminCustomDesigns />
           </TabsContent>
           
-          <TabsContent value="analytics">
-            <AdminAnalytics />
+          <TabsContent value="settings">
+            <AdminSettings />
           </TabsContent>
         </Tabs>
       </div>
