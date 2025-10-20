@@ -128,6 +128,12 @@ export const CartDrawer = () => {
                 </div>
                 
                 <Button 
+                  onClick={() => {
+                    setIsOpen(false);
+                    setTimeout(() => {
+                      window.location.href = '/checkout';
+                    }, 300);
+                  }}
                   className="w-full bg-gradient-to-r from-primary to-secondary hover:shadow-[0_0_30px_rgba(255,193,7,0.5)] transition-all" 
                   size="lg"
                   disabled={items.length === 0}
