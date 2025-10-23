@@ -267,7 +267,7 @@ export function AdminProducts() {
                 />
               )}
               <div className="space-y-2 text-sm">
-                <p><strong>السعر:</strong> ${product.price}</p>
+                <p><strong>السعر:</strong> {product.price}</p>
                 <p><strong>الكمية:</strong> {product.stock_quantity}</p>
                 <p><strong>التصنيف:</strong> {product.category === 'summer' ? 'صيفي' : product.category === 'winter' ? 'شتوي' : 'مخصص'}</p>
                 <p><strong>الحالة:</strong> {product.is_active ? 'نشط' : 'غير نشط'}</p>

@@ -126,13 +126,13 @@ export function AdminOrders() {
                       <span>
                         {item.product_title} {item.variant_info && `(${item.variant_info})`} x{item.quantity}
                       </span>
-                      <span>${item.total_price}</span>
+                      <span>{item.total_price}</span>
                     </div>
                   ))}
                 </div>
                 <div className="flex justify-between font-bold pt-2 border-t">
                   <span>المجموع:</span>
-                  <span>${order.total_amount}</span>
+                  <span>{order.total_amount}</span>
                 </div>
               </div>
 

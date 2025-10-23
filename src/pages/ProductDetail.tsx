@@ -106,7 +106,7 @@ const ProductDetail = () => {
                 </span>
               </h1>
               <p className="text-3xl font-bold text-primary mb-6">
-                ${product.price.toFixed(2)}
+                {product.price.toFixed(2)}
               </p>
               <p className="text-foreground/80 leading-relaxed">
                 {product.description || 'No description available'}

@@ -314,7 +314,7 @@ const Checkout = () => {
                         <h4 className="font-medium text-sm truncate">{item.product.title}</h4>
                         <p className="text-xs text-muted-foreground">الكمية: {item.quantity}</p>
                         <p className="text-sm font-bold text-primary">
-                          ${(item.product.price * item.quantity).toFixed(2)}
+                          {(item.product.price * item.quantity).toFixed(2)}
                         </p>
                       </div>
                     </div>
@@ -324,7 +324,7 @@ const Checkout = () => {
                 <div className="border-t border-primary/10 pt-4 space-y-2">
                   <div className="flex justify-between text-muted-foreground">
                     <span>المجموع الفرعي</span>
-                    <span>${getTotalPrice().toFixed(2)}</span>
+                    <span>{getTotalPrice().toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-muted-foreground">
                     <span>الشحن</span>
@@ -333,7 +333,7 @@ const Checkout = () => {
                   <div className="border-t border-primary/10 pt-2 mt-2">
                     <div className="flex justify-between text-lg font-bold">
                       <span>الإجمالي</span>
-                      <span className="text-primary">${getTotalPrice().toFixed(2)}</span>
+                      <span className="text-primary">{getTotalPrice().toFixed(2)}</span>
                     </div>
                   </div>
                 </div>

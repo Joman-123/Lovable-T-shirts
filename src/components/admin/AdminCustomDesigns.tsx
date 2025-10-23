@@ -99,7 +99,7 @@ export function AdminCustomDesigns() {
                 </div>
                 <div className="space-y-2 text-sm">
                   {design.estimated_price && (
-                    <p><strong>السعر المقدر:</strong> ${design.estimated_price}</p>
+                    <p><strong>السعر المقدر:</strong> {design.estimated_price}</p>
                   )}
                 </div>
               </div>

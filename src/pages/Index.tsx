@@ -175,7 +175,7 @@ const Index = () => {
                       <div className="flex items-center justify-between pt-2">
                         <div>
                           <p className="text-3xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                            ${product.price.toFixed(2)}
+                            {product.price.toFixed(2)}
                           </p>
                         </div>
                         <div className="flex items-center gap-2 text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity">

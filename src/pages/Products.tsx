@@ -149,11 +149,11 @@ const Products = () => {
                   <div className="flex items-center justify-between pt-2">
                     <div>
                       <p className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                        ${product.price.toFixed(2)}
+                        {product.price.toFixed(2)}
                       </p>
                       {index % 4 === 0 && (
                         <p className="text-xs text-muted-foreground line-through">
-                          ${(product.price * 1.3).toFixed(2)}
+                          {(product.price * 1.3).toFixed(2)}
                         </p>
                       )}
                     </div>

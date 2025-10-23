@@ -80,7 +80,7 @@ export const CartDrawer = () => {
                           </p>
                         )}
                         <p className="font-semibold text-primary">
-                          ${item.product.price.toFixed(2)}
+                          {item.product.price.toFixed(2)}
                         </p>
                       </div>
                       
@@ -123,7 +123,7 @@ export const CartDrawer = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold">{t('cart.total')}</span>
                   <span className="text-xl font-bold text-primary">
-                    ${totalPrice.toFixed(2)}
+                    {totalPrice.toFixed(2)}
                   </span>
                 </div>
                 
