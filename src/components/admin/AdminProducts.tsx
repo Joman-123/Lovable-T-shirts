@@ -11,15 +11,31 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from 'sonner';
 import { Plus, Edit, Trash2, Loader2 } from 'lucide-react';
 
+type Category = 'summer' | 'winter' | 'custom';
+
+type Product = {
+  id: string;
+  title: string;
+  description: string | null;
+  price: number;
+  category: Category;
+  image_url: string | null;
+  stock_quantity: number;
+  is_active: boolean;
+  created_at?: string;
+};
+
+type ProductInput = Omit<Product, 'id' | 'created_at'>;
+
 export function AdminProducts() {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     price: '',
-    category: 'summer' as 'summer' | 'winter' | 'custom',
+    category: 'summer' as Category,
     image_url: '',
     stock_quantity: '0',
     is_active: true
@@ -39,7 +55,7 @@ export function AdminProducts() {
   });
 
   const createMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: ProductInput) => {
       const { error } = await supabase.from('products').insert(data);
       if (error) throw error;
     },
@@ -49,13 +65,14 @@ export function AdminProducts() {
       resetForm();
       setIsDialogOpen(false);
     },
-    onError: (error: any) => {
-      toast.error('خطأ في إضافة المنتج', { description: error.message });
+    onError: (error: unknown) => {
+      const description = error instanceof Error ? error.message : 'حدث خطأ غير متوقع';
+      toast.error('خطأ في إضافة المنتج', { description });
     }
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: any }) => {
+    mutationFn: async ({ id, data }: { id: string; data: Partial<ProductInput> }) => {
       const { error } = await supabase
         .from('products')
         .update(data)
@@ -68,8 +85,9 @@ export function AdminProducts() {
       resetForm();
       setIsDialogOpen(false);
     },
-    onError: (error: any) => {
-      toast.error('خطأ في تحديث المنتج', { description: error.message });
+    onError: (error: unknown) => {
+      const description = error instanceof Error ? error.message : 'حدث خطأ غير متوقع';
+      toast.error('خطأ في تحديث المنتج', { description });
     }
   });
 
@@ -82,8 +100,9 @@ export function AdminProducts() {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       toast.success('تم حذف المنتج بنجاح');
     },
-    onError: (error: any) => {
-      toast.error('خطأ في حذف المنتج', { description: error.message });
+    onError: (error: unknown) => {
+      const description = error instanceof Error ? error.message : 'حدث خطأ غير متوقع';
+      toast.error('خطأ في حذف المنتج', { description });
     }
   });
 
@@ -116,7 +135,7 @@ export function AdminProducts() {
     }
   };
 
-  const handleEdit = (product: any) => {
+  const handleEdit = (product: Product) => {
     setEditingProduct(product);
     setFormData({
       title: product.title,
@@ -203,7 +222,7 @@ export function AdminProducts() {
                 <Label htmlFor="category">التصنيف *</Label>
                 <Select
                   value={formData.category}
-                  onValueChange={(value: any) => setFormData({ ...formData, category: value })}
+                  onValueChange={(value: Category) => setFormData({ ...formData, category: value })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -253,7 +272,7 @@ export function AdminProducts() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {products?.map((product) => (
+        {products?.map((product: Product) => (
           <Card key={product.id}>
             <CardHeader>
               <CardTitle className="text-lg">{product.title}</CardTitle>

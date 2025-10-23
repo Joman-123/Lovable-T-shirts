@@ -49,8 +49,9 @@ export function AdminOrders() {
       queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
       toast.success('تم تحديث حالة الطلب بنجاح');
     },
-    onError: (error: any) => {
-      toast.error('خطأ في تحديث حالة الطلب', { description: error.message });
+    onError: (error: unknown) => {
+      const description = error instanceof Error ? error.message : 'حدث خطأ غير متوقع';
+      toast.error('خطأ في تحديث حالة الطلب', { description });
     }
   });
 
@@ -121,7 +122,7 @@ export function AdminOrders() {
               <div className="space-y-2">
                 <h4 className="font-semibold">المنتجات:</h4>
                 <div className="space-y-1">
-                  {order.order_items?.map((item: any) => (
+                  {order.order_items?.map((item: { id: string; product_title: string; variant_info: string | null; quantity: number; unit_price: number; total_price: number }) => (
                     <div key={item.id} className="flex justify-between text-sm">
                       <span>
                         {item.product_title} {item.variant_info && `(${item.variant_info})`} x{item.quantity}
