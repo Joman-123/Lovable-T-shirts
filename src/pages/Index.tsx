@@ -8,15 +8,7 @@ import type { Product } from "@/stores/cartStore";
 import heroImage from "@/assets/hero-banner.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { PromoCard } from "@/components/PromoCard";
-import { CollectionCard } from "@/components/CollectionCard";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { PromotionalCarousel } from "@/components/PromotionalCarousel";
 
 const Index = () => {
   const { t } = useTranslation();
@@ -105,141 +97,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Promotional Banners - Winter Sale */}
-      <section className="py-20 bg-gradient-to-b from-background via-muted/5 to-background relative overflow-hidden">
-        {/* Background Decoration */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-20 left-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
-        </div>
-
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-16 animate-slide-up-fade">
-            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary/10 border border-primary/20 mb-6">
-              <Flame className="h-5 w-5 text-primary animate-pulse" />
-              <span className="text-sm font-bold text-primary uppercase tracking-wider">عروض حصرية</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
-                عروض الشتاء الحارة 🔥
-              </span>
-            </h2>
-            <p className="text-xl text-foreground/70 max-w-2xl mx-auto">
-              اكتشف أحدث العروض والتخفيضات الحصرية على تيشيرتاتنا المميزة
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            <PromoCard
-              title="تخفيضات الشتاء"
-              subtitle="عرض محدود"
-              discount="خصم 40%"
-              description="احصل على خصم يصل إلى 40% على جميع منتجات المجموعة الشتوية. عرض لفترة محدودة!"
-              buttonText="تسوق الآن"
-              buttonLink="/products"
-              icon="snowflake"
-              variant="primary"
-              index={0}
-            />
-            <PromoCard
-              title="مجموعة جديدة"
-              subtitle="وصل حديثاً"
-              description="اكتشف أحدث تصاميمنا الحصرية. تيشيرتات عصرية بجودة استثنائية وألوان رائعة."
-              buttonText="استكشف المجموعة"
-              buttonLink="/products"
-              icon="sparkles"
-              variant="secondary"
-              index={1}
-            />
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            <PromoCard
-              title="صمم تيشيرتك الخاص"
-              subtitle="خدمة حصرية"
-              description="هل لديك فكرة مميزة؟ صمم تيشيرتك بنفسك واحصل على منتج فريد يعكس شخصيتك. نوفر لك أفضل جودة طباعة وأقمشة مميزة."
-              buttonText="ابدأ التصميم"
-              buttonLink="/custom-design"
-              icon="tag"
-              variant="accent"
-              index={2}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Collections Carousel */}
-      <section className="py-20 relative">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16 animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-secondary/10 border border-secondary/20 mb-6">
-              <Star className="h-5 w-5 text-secondary" />
-              <span className="text-sm font-bold text-secondary uppercase tracking-wider">مجموعاتنا المميزة</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">
-                استكشف مجموعاتنا
-              </span>
-            </h2>
-            <p className="text-xl text-foreground/70 max-w-2xl mx-auto">
-              مجموعات مختارة بعناية لتناسب جميع الأذواق والمناسبات
-            </p>
-          </div>
-
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full"
-          >
-            <CarouselContent className="-ml-4">
-              <CarouselItem className="pl-4 md:basis-1/2 lg:basis-1/3">
-                <CollectionCard
-                  title="مجموعة الشتاء"
-                  description="تيشيرتات دافئة ومريحة مثالية للأجواء الباردة"
-                  itemCount={12}
-                  category="شتوي"
-                  link="/products"
-                  index={0}
-                />
-              </CarouselItem>
-              <CarouselItem className="pl-4 md:basis-1/2 lg:basis-1/3">
-                <CollectionCard
-                  title="التصاميم الكلاسيكية"
-                  description="تصاميم خالدة تناسب جميع الأوقات والمناسبات"
-                  itemCount={8}
-                  category="كلاسيك"
-                  link="/products"
-                  index={1}
-                />
-              </CarouselItem>
-              <CarouselItem className="pl-4 md:basis-1/2 lg:basis-1/3">
-                <CollectionCard
-                  title="التصاميم العصرية"
-                  description="أحدث صيحات الموضة في عالم التيشيرتات"
-                  itemCount={15}
-                  category="عصري"
-                  link="/products"
-                  index={2}
-                />
-              </CarouselItem>
-              <CarouselItem className="pl-4 md:basis-1/2 lg:basis-1/3">
-                <CollectionCard
-                  title="الطبعات الفنية"
-                  description="تصاميم فنية مبتكرة لعشاق الفن والإبداع"
-                  itemCount={10}
-                  category="فني"
-                  link="/products"
-                  index={3}
-                />
-              </CarouselItem>
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:flex -left-12 border-primary/30 hover:bg-primary/10 hover:border-primary" />
-            <CarouselNext className="hidden md:flex -right-12 border-primary/30 hover:bg-primary/10 hover:border-primary" />
-          </Carousel>
-        </div>
-      </section>
+      {/* Promotional Carousel - Marketing Banners */}
+      <PromotionalCarousel />
 
       {/* Featured Products Preview */}
       <section className="py-20 bg-gradient-to-b from-background to-muted/5 relative">
